@@ -2,7 +2,6 @@ import json
 import ssl
 import urllib.request
 from lib.gag import Gag
-from bs4 import BeautifulSoup
 
 def scrap_gags():
     ssl._create_default_https_context = ssl._create_unverified_context

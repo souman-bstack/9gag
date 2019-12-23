@@ -6,13 +6,18 @@ class Gag(mongoengine.Document):
     content_type = mongoengine.StringField(required=True)
     url = mongoengine.StringField(required=True)
     created_at = mongoengine.DateTimeField(default=datetime.datetime.now)
+    tags = mongoengine.StringField()
 
     def save_gags(gags):
         for gag in gags:
             existing_gag = Gag.objects(url=gag['url']).first()
             if existing_gag == None:
-              newGag = Gag(content_type=gag['type'], url=gag['url'])
-              newGag.save()
+                tags = gag['tags']
+                gag_tags = []
+                for tag in tags:
+                    gag_tags.append(tag['key'])
+                newGag = Gag(content_type=gag['type'], url=gag['url'], tags=', '.join(gag_tags))
+                newGag.save()
 
     def get_gags(type, count):
         input_mapping = dict({'IMAGE': 'Photo', 'GIF': 'Animated', 'VIDEO':'EmbedVideo'})
@@ -25,4 +30,4 @@ class Gag(mongoengine.Document):
         else:
             gags = Gag.objects().order_by('created_at')[:count]
         for gag in gags:
-            print(gag.url)
+            print(gag.url, gag.tags)
